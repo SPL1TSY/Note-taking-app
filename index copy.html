@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<title></title>
+
+<body>
+    <div id="app">
+        <select id="language-select">
+            <option value="en">English</option>
+            <option value="no">Norsk</option>
+        </select>
+        <h1 id="title">Notes App</h1>
+        <input type="text" id="note-input" name="noteInp" placeholder="Enter a new note">
+        <button id="add-button">Add Note</button>
+        <ul id="notes-list"></ul>
+    </div>
+
+</body>
+<style>
+    #app {
+        max-width: 600px;
+        margin: 50px auto;
+        text-align: center;
+    }
+
+    input[type="text"] {
+        padding: 10px;
+        font-size: 16px;
+        width: 70%;
+        margin-bottom: 20px;
+    }
+
+    button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: lightblue;
+        border: none;
+        cursor: pointer;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+    }
+
+    li {
+        background-color: lightgray;
+        padding: 10px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .remove-button {
+        background-color: red;
+        color: white;
+    }
+</style>
+<script>
+    // Define an array to store the notes
+    let notes = [];
+
+    // Function to add a new note
+    function addNote(text) {
+        let note = {
+            id: Date.now(),
+            content: text
+        };
+        notes.push(note);
+    }
+
+    // Function to remove a note
+    function removeNote(id) {
+        notes = notes.filter(function (note) {
+            return note.id !== id;
+        });
+    }
+
+    // Function to display all notes
+    function displayNotes() {
+        let notesList = document.getElementById("notes-list");
+        notesList.innerHTML = "";
+        for (let i = 0; i < notes.length; i++) {
+            let note = notes[i];
+            let noteItem = document.createElement("li");
+            noteItem.innerHTML = `
+      ${note.content}
+      <button class="remove-button" data-id="${note.id}">Remove</button>
+    `;
+            notesList.appendChild(noteItem);
+        }
+        let removeButtons = document.querySelectorAll(".remove-button");
+        for (let i = 0; i < removeButtons.length; i++) {
+            let button = removeButtons[i];
+            button.addEventListener("click", function () {
+                removeNote(parseInt(this.dataset.id));
+                displayNotes();
+            });
+        }
+    }
+
+    // Add an object with translated text for each language
+    const translations = {
+        en: {
+            title: "Notes App",
+            placeHold: "Write a note..",
+            addNote: "Add Note",
+            removeNote: "Remove Note"
+        },
+        no: {
+            title: "Notat Applikasjon",
+            placeHold: "Skriv et notat..",
+            addNote: "Legg til notat",
+            removeNote: "Fjern Notat"
+        }
+    };
+
+    // Function to change the language
+    function changeLanguage(language) {
+        document.getElementById("title").innerText = translations[language].title;
+        document.getElementById("add-button").innerText = translations[language].addNote;
+        document.getElementsByName('noteInp')[0].placeholder = translations[language].placeHold;
+        let removeButtons = document.querySelectorAll(".remove-button");
+        for (let i = 0; i < removeButtons.length; i++) {
+            removeButtons[i].innerText = translations[language].removeNote;
+        }
+    }
+
+    // Add a listener to the language select element
+    let languageSelect = document.getElementById("language-select");
+    languageSelect.addEventListener("change", function () {
+        changeLanguage(this.value);
+    });
+
+    // Display the initial list of notes with the default language (English)
+    // Add a listener to the "Add Note" button
+    let addButton = document.getElementById("add-button");
+
+    addButton.addEventListener("click", function () {
+        let input = document.getElementById("note-input");
+        addNote(input.value);
+        input.value = "";
+        displayNotes();
+    });
+
+</script>
+
+</html>
