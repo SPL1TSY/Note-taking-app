@@ -1,5 +1,7 @@
 //#region
 
+server.get("/fact", retrieveFact);
+
 import express from 'express'
 
 const server = express();
